@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFF',
     paddingHorizontal: 16,
-    paddingTop: 60,
+    paddingTop: 16,
     paddingBottom: 16,
   },
   searchContainer: {
