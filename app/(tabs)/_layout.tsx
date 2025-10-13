@@ -9,6 +9,7 @@ export default function TabLayout() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#121212' }}>
+            {!isPlayerScreen && <MiniPlayer />}
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -65,7 +66,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      {!isPlayerScreen && <MiniPlayer />}
+
     </View>
   );
 }
