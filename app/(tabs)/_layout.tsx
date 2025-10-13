@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   miniPlayerContainer: {
     position: 'absolute',
-    bottom: 50, // lift it above the tab bar
+    bottom: 55, 
     left: 0,
     right: 0,
     zIndex: 10,
