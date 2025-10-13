@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image, Keyboard, ScrollView } from 'react-native';
 import { useState, useRef } from 'react';
 import { useRouter } from 'expo-router';
 import { Search as SearchIcon, Music, X } from 'lucide-react-native';
@@ -10,15 +10,38 @@ type SearchResult = {
   data: Artist | Song;
 };
 
+const METAL_GENRES = [
+  'Heavy Metal',
+  'Thrash Metal',
+  'Death Metal',
+  'Black Metal',
+  'Power Metal',
+  'Progressive Metal',
+  'Doom Metal',
+  'Symphonic Metal',
+  'Folk Metal',
+  'Melodic Death Metal',
+  'Metalcore',
+  'Deathcore',
+  'Nu Metal',
+  'Industrial Metal',
+  'Gothic Metal',
+  'Groove Metal',
+];
+
 export default function SearchTab() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [genreArtists, setGenreArtists] = useState<Artist[]>([]);
   const router = useRouter();
   const inputRef = useRef<TextInput>(null);
 
   async function handleSearch(text: string) {
     setQuery(text);
+    setSelectedGenre(null);
+    setGenreArtists([]);
 
     if (text.length < 2) {
       setResults([]);
@@ -54,6 +77,24 @@ export default function SearchTab() {
       setResults([...artistResults, ...songResults]);
     } catch (error) {
       console.error('Error searching:', error);
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  async function handleGenreSelect(genre: string) {
+    setSelectedGenre(genre);
+    setSearching(true);
+    try {
+      const { data } = await supabase
+        .from('artists')
+        .select('*')
+        .ilike('genre', `%${genre}%`)
+        .limit(20);
+
+      setGenreArtists(data || []);
+    } catch (error) {
+      console.error('Error fetching genre artists:', error);
     } finally {
       setSearching(false);
     }
@@ -131,10 +172,51 @@ export default function SearchTab() {
         )}
       </View>
 
-      {query.length === 0 && (
-        <View style={styles.emptyState}>
-          <SearchIcon size={64} color="#4D4D4D" />
-          <Text style={styles.emptyText}>Search for artists and songs</Text>
+      {query.length === 0 && !selectedGenre && (
+        <ScrollView style={styles.genresContainer}>
+          <Text style={styles.genresTitle}>Browse Metal Genres</Text>
+          <View style={styles.genresGrid}>
+            {METAL_GENRES.map((genre) => (
+              <TouchableOpacity
+                key={genre}
+                style={styles.genreCard}
+                onPress={() => handleGenreSelect(genre)}>
+                <Text style={styles.genreText}>{genre}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      )}
+
+      {selectedGenre && (
+        <View style={styles.genreResults}>
+          <View style={styles.genreHeader}>
+            <Text style={styles.genreResultsTitle}>{selectedGenre}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedGenre(null);
+                setGenreArtists([]);
+              }}
+              style={styles.backButton}>
+              <Text style={styles.backButtonText}>Back to Genres</Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={genreArtists}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.resultItem}
+                onPress={() => router.push(`/artist/${item.id}`)}>
+                <Image source={{ uri: item.image_url }} style={styles.resultImage} />
+                <View style={styles.resultInfo}>
+                  <Text style={styles.resultTitle}>{item.name}</Text>
+                  <Text style={styles.resultSubtitle}>Artist • {item.genre}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.resultsList}
+          />
         </View>
       )}
 
@@ -144,12 +226,14 @@ export default function SearchTab() {
         </View>
       )}
 
-      <FlatList
-        data={results}
-        keyExtractor={(item, index) => `${item.type}-${item.data.id}-${index}`}
-        renderItem={renderResult}
-        contentContainerStyle={styles.resultsList}
-      />
+      {query.length > 0 && (
+        <FlatList
+          data={results}
+          keyExtractor={(item, index) => `${item.type}-${item.data.id}-${index}`}
+          renderItem={renderResult}
+          contentContainerStyle={styles.resultsList}
+        />
+      )}
     </View>
   );
 }
@@ -239,5 +323,60 @@ const styles = StyleSheet.create({
   resultSubtitle: {
     fontSize: 14,
     color: '#8E8E93',
+  },
+  genresContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  genresTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 16,
+  },
+  genresGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  genreCard: {
+    backgroundColor: '#1C1C1E',
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    width: '47%',
+    alignItems: 'center',
+  },
+  genreText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  genreResults: {
+    flex: 1,
+  },
+  genreHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  genreResultsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  backButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: '#1C1C1E',
+    borderRadius: 6,
+  },
+  backButtonText: {
+    color: '#1DB954',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
