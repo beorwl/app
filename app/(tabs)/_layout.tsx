@@ -44,6 +44,19 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="artist"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="player"
+          options={{
+            href: null,
+            tabBarStyle: { display: 'none' },
+          }}
+        />
       </Tabs>
   );
 }
