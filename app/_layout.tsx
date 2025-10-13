@@ -3,6 +3,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { PlayerProvider } from '@/contexts/PlayerContext';
 
 function RootLayoutNav() {
   const { user, loading } = useAuth();
@@ -35,8 +36,10 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <RootLayoutNav />
-      <StatusBar style="auto" />
+      <PlayerProvider>
+        <RootLayoutNav />
+        <StatusBar style="auto" />
+      </PlayerProvider>
     </AuthProvider>
   );
 }

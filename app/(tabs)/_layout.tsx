@@ -1,8 +1,11 @@
 import { Tabs } from 'expo-router';
+import { View } from 'react-native';
 import { Search, House, User } from 'lucide-react-native';
+import MiniPlayer from '@/components/MiniPlayer';
 
 export default function TabLayout() {
   return (
+    <View style={{ flex: 1, backgroundColor: '#121212' }}>
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -45,7 +48,21 @@ export default function TabLayout() {
             ),
           }}
         />
-      
+        <Tabs.Screen
+          name="artist"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="player"
+          options={{
+            href: null,
+            tabBarStyle: { display: 'none' },
+          }}
+        />
       </Tabs>
+      <MiniPlayer />
+    </View>
   );
 }

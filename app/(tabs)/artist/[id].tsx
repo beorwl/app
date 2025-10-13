@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useCallback } from 'react';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePlayer } from '@/contexts/PlayerContext';
 import { supabase } from '@/lib/supabase';
 import { deleteImage } from '@/lib/storage';
 import { Artist, Album } from '@/types/database';
@@ -13,10 +14,12 @@ interface Track {
   track_number: number;
   total_playtime_seconds: number;
   album_id: string;
+  audio_url: string;
   album: {
     id: string;
     title: string;
     cover_image_url: string | null;
+    artist_id: string;
   };
 }
 import { Plus, Trash2, ArrowLeft, Music, ExternalLink } from 'lucide-react-native';
@@ -40,6 +43,7 @@ export default function ArtistDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { userProfile } = useAuth();
+  const { playTrack } = usePlayer();
 
   const [artist, setArtist] = useState<Artist | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -68,10 +72,12 @@ export default function ArtistDetailScreen() {
           track_number,
           total_playtime_seconds,
           album_id,
+          audio_url,
           album:albums(
             id,
             title,
-            cover_image_url
+            cover_image_url,
+            artist_id
           )
         `)
         .eq('albums.artist_id', id)
@@ -178,7 +184,23 @@ export default function ArtistDetailScreen() {
               <TouchableOpacity
                 key={track.id}
                 style={styles.topTrackItem}
-                onPress={() => router.push(`/player/${track.album_id}`)}>
+                onPress={() => {
+                  playTrack(
+                    {
+                      id: track.id,
+                      title: track.title,
+                      audio_url: track.audio_url,
+                      album_id: track.album_id,
+                      total_playtime_seconds: track.total_playtime_seconds,
+                    },
+                    {
+                      id: track.album.id,
+                      title: track.album.title,
+                      cover_image_url: track.album.cover_image_url,
+                      artist_id: track.album.artist_id,
+                    }
+                  );
+                }}>
                 <Text style={styles.topTrackNumber}>{index + 1}</Text>
                 {track.album.cover_image_url ? (
                   <Image source={{ uri: track.album.cover_image_url }} style={styles.topTrackCover} />
