@@ -1,5 +1,5 @@
 import { Tabs, useSegments } from 'expo-router';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Search, House, User } from 'lucide-react-native';
 import MiniPlayer from '@/components/MiniPlayer';
 
@@ -8,8 +8,7 @@ export default function TabLayout() {
   const isPlayerScreen = segments[segments.length - 2] === 'player';
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#121212' }}>
-           
+    <View style={styles.container}>
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -19,7 +18,8 @@ export default function TabLayout() {
             backgroundColor: '#000',
             borderTopColor: '#1C1C1E',
           },
-        }}>
+        }}
+      >
         <Tabs.Screen
           name="index"
           options={{
@@ -40,8 +40,6 @@ export default function TabLayout() {
             ),
           }}
         />
-
-        
         <Tabs.Screen
           name="profile"
           options={{
@@ -66,7 +64,26 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
- {!isPlayerScreen && <MiniPlayer />}
+
+      {!isPlayerScreen && (
+        <View style={styles.miniPlayerContainer}>
+          <MiniPlayer />
+        </View>
+      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#121212',
+  },
+  miniPlayerContainer: {
+    position: 'absolute',
+    bottom: 60, // lift it above the tab bar
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
+});
