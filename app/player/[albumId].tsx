@@ -12,6 +12,7 @@ interface Track {
   track_number: number;
   audio_url: string;
   duration_seconds: number | null;
+  play_count: number | null;
 }
 
 export default function PlayerScreen() {
@@ -72,6 +73,11 @@ export default function PlayerScreen() {
       setSound(newSound);
       setCurrentTrackIndex(index);
       setIsPlaying(true);
+
+      await supabase
+        .from('tracks')
+        .update({ play_count: (track.play_count || 0) + 1 })
+        .eq('id', track.id);
 
       newSound.setOnPlaybackStatusUpdate((status) => {
         if (status.isLoaded && status.didJustFinish) {

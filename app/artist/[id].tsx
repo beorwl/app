@@ -5,6 +5,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { deleteImage } from '@/lib/storage';
 import { Artist, Album } from '@/types/database';
+
+interface Track {
+  id: string;
+  title: string;
+  track_number: number;
+  play_count: number;
+  album_id: string;
+  album: {
+    id: string;
+    title: string;
+    cover_image_url: string | null;
+  };
+}
 import { Plus, Trash2, ArrowLeft, Music } from 'lucide-react-native';
 
 export default function ArtistDetailScreen() {
@@ -14,6 +27,7 @@ export default function ArtistDetailScreen() {
 
   const [artist, setArtist] = useState<Artist | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
+  const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
 
   const isOwner = artist?.owner_id === userProfile?.id;
@@ -27,9 +41,26 @@ export default function ArtistDetailScreen() {
   async function loadArtistData() {
     setLoading(true);
 
-    const [artistResult, albumsResult] = await Promise.all([
+    const [artistResult, albumsResult, topTracksResult] = await Promise.all([
       supabase.from('artists').select('*').eq('id', id).maybeSingle(),
-      supabase.from('albums').select('*').eq('artist_id', id).order('created_at', { ascending: false }),
+      supabase.from('albums').select('*').eq('artist_id', id).order('release_date', { ascending: false }),
+      supabase
+        .from('tracks')
+        .select(`
+          id,
+          title,
+          track_number,
+          play_count,
+          album_id,
+          album:albums(
+            id,
+            title,
+            cover_image_url
+          )
+        `)
+        .eq('albums.artist_id', id)
+        .order('play_count', { ascending: false })
+        .limit(10),
     ]);
 
     if (artistResult.data) {
@@ -38,6 +69,10 @@ export default function ArtistDetailScreen() {
 
     if (albumsResult.data) {
       setAlbums(albumsResult.data);
+    }
+
+    if (topTracksResult.data) {
+      setTopTracks(topTracksResult.data as Track[]);
     }
 
     setLoading(false);
@@ -101,23 +136,46 @@ export default function ArtistDetailScreen() {
         {artist.bio && <Text style={styles.artistBio}>{artist.bio}</Text>}
       </View>
 
-      {isOwner && (
+      {topTracks.length > 0 && (
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Albums</Text>
+          <Text style={styles.sectionTitle}>Popular Tracks</Text>
+          <View style={styles.topTracksList}>
+            {topTracks.map((track, index) => (
+              <TouchableOpacity
+                key={track.id}
+                style={styles.topTrackItem}
+                onPress={() => router.push(`/player/${track.album_id}`)}>
+                <Text style={styles.topTrackNumber}>{index + 1}</Text>
+                {track.album.cover_image_url ? (
+                  <Image source={{ uri: track.album.cover_image_url }} style={styles.topTrackCover} />
+                ) : (
+                  <View style={[styles.topTrackCover, styles.topTrackCoverPlaceholder]}>
+                    <Music size={20} color="#3C3C3E" />
+                  </View>
+                )}
+                <View style={styles.topTrackInfo}>
+                  <Text style={styles.topTrackTitle} numberOfLines={1}>{track.title}</Text>
+                  <Text style={styles.topTrackAlbum} numberOfLines={1}>{track.album.title}</Text>
+                </View>
+                <Text style={styles.topTrackPlays}>{track.play_count.toLocaleString()}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      )}
+
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Discography</Text>
+          {isOwner && (
             <TouchableOpacity
               style={styles.addButton}
               onPress={() => router.push(`/album-form/create?artistId=${id}`)}>
               <Plus size={20} color="#FFF" />
               <Text style={styles.addButtonText}>Add Album</Text>
             </TouchableOpacity>
-          </View>
-
+          )}
         </View>
-      )}
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Albums</Text>
 
         {albums.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -315,6 +373,51 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: 16,
     padding: 6,
+  },
+  topTracksList: {
+    gap: 8,
+  },
+  topTrackItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#181818',
+    borderRadius: 8,
+    gap: 12,
+  },
+  topTrackNumber: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8E8E93',
+    width: 24,
+    textAlign: 'center',
+  },
+  topTrackCover: {
+    width: 48,
+    height: 48,
+    borderRadius: 4,
+    backgroundColor: '#282828',
+  },
+  topTrackCoverPlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topTrackInfo: {
+    flex: 1,
+  },
+  topTrackTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#FFF',
+  },
+  topTrackAlbum: {
+    fontSize: 13,
+    color: '#B3B3B3',
+    marginTop: 2,
+  },
+  topTrackPlays: {
+    fontSize: 13,
+    color: '#8E8E93',
   },
   errorText: {
     fontSize: 16,
