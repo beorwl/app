@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image, Linking, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image, Linking, Dimensions, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useCallback } from 'react';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
@@ -223,19 +223,35 @@ export default function ArtistDetailScreen() {
             )}
           </View>
         ) : (
-          <View style={styles.albumsGrid}>
-            {albums.map((album) => (
+          <FlatList
+            data={albums}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.albumsCarousel}
+            keyExtractor={(album) => album.id}
+            renderItem={({ item: album }) => (
               <TouchableOpacity
-                key={album.id}
                 style={styles.albumCard}
                 onPress={() => router.push(`/player/${album.id}`)}>
-                {album.cover_image_url ? (
-                  <Image source={{ uri: album.cover_image_url }} style={styles.albumCover} />
-                ) : (
-                  <View style={[styles.albumCover, styles.albumCoverPlaceholder]}>
-                    <Music size={48} color="#3C3C3E" />
-                  </View>
-                )}
+                <View style={styles.albumImageContainer}>
+                  {album.cover_image_url ? (
+                    <Image source={{ uri: album.cover_image_url }} style={styles.albumCover} resizeMode="cover" />
+                  ) : (
+                    <View style={[styles.albumCover, styles.albumCoverPlaceholder]}>
+                      <Music size={48} color="#3C3C3E" />
+                    </View>
+                  )}
+                  {isOwner && (
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleDeleteAlbum(album);
+                      }}
+                      style={styles.deleteIconButton}>
+                      <Trash2 size={18} color="#FF3B30" />
+                    </TouchableOpacity>
+                  )}
+                </View>
                 <View style={styles.albumCardInfo}>
                   <Text style={styles.albumTitle} numberOfLines={1}>{album.title}</Text>
                   {album.release_date && (
@@ -244,19 +260,9 @@ export default function ArtistDetailScreen() {
                     </Text>
                   )}
                 </View>
-                {isOwner && (
-                  <TouchableOpacity
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      handleDeleteAlbum(album);
-                    }}
-                    style={styles.deleteIconButton}>
-                    <Trash2 size={18} color="#FF3B30" />
-                  </TouchableOpacity>
-                )}
               </TouchableOpacity>
-            ))}
-          </View>
+            )}
+          />
         )}
       </View>
     </ScrollView>
@@ -416,22 +422,25 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
     marginTop: 16,
   },
-  albumsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
+  albumsCarousel: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   albumCard: {
-    width: '47%',
-    backgroundColor: '#181818',
-    borderRadius: 8,
-    padding: 12,
+    width: 180,
+    marginRight: 16,
+  },
+  albumImageContainer: {
     position: 'relative',
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#1C1C1E',
   },
   albumCover: {
     width: '100%',
-    aspectRatio: 1,
-    borderRadius: 4,
+    height: '100%',
     backgroundColor: '#282828',
   },
   albumCoverPlaceholder: {
@@ -439,7 +448,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   albumCardInfo: {
-    marginTop: 12,
+    paddingTop: 8,
   },
   albumTitle: {
     fontSize: 14,
@@ -453,11 +462,12 @@ const styles = StyleSheet.create({
   },
   deleteIconButton: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    top: 6,
+    right: 6,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     borderRadius: 16,
     padding: 6,
+    zIndex: 10,
   },
   topTracksList: {
     gap: 8,
