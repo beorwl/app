@@ -12,7 +12,7 @@ interface Track {
   track_number: number;
   audio_url: string;
   duration_seconds: number | null;
-  play_count: number | null;
+  total_playtime_seconds: number | null;
 }
 
 export default function PlayerScreen() {
@@ -25,6 +25,8 @@ export default function PlayerScreen() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const playStartTimeRef = useRef<number | null>(null);
+  const lastPositionRef = useRef<number>(0);
 
   const currentTrack = tracks[currentTrackIndex];
 
@@ -32,6 +34,7 @@ export default function PlayerScreen() {
     loadAlbumData();
     return () => {
       if (sound) {
+        recordPlaytime();
         sound.unloadAsync();
       }
     };
@@ -73,15 +76,17 @@ export default function PlayerScreen() {
       setSound(newSound);
       setCurrentTrackIndex(index);
       setIsPlaying(true);
-
-      await supabase
-        .from('tracks')
-        .update({ play_count: (track.play_count || 0) + 1 })
-        .eq('id', track.id);
+      playStartTimeRef.current = Date.now();
+      lastPositionRef.current = 0;
 
       newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          handleNext();
+        if (status.isLoaded) {
+          if (status.isPlaying) {
+            lastPositionRef.current = status.positionMillis / 1000;
+          }
+          if (status.didJustFinish) {
+            handleNext();
+          }
         }
       });
     } catch (error) {
@@ -96,15 +101,35 @@ export default function PlayerScreen() {
     }
 
     if (isPlaying) {
+      await recordPlaytime();
       await sound.pauseAsync();
       setIsPlaying(false);
     } else {
+      playStartTimeRef.current = Date.now();
       await sound.playAsync();
       setIsPlaying(true);
     }
   }
 
+  async function recordPlaytime() {
+    if (!currentTrack || !playStartTimeRef.current) return;
+
+    const playedSeconds = Math.floor(lastPositionRef.current);
+    if (playedSeconds > 0) {
+      await supabase
+        .from('tracks')
+        .update({
+          total_playtime_seconds: (currentTrack.total_playtime_seconds || 0) + playedSeconds
+        })
+        .eq('id', currentTrack.id);
+    }
+
+    playStartTimeRef.current = null;
+    lastPositionRef.current = 0;
+  }
+
   async function handleNext() {
+    await recordPlaytime();
     const nextIndex = currentTrackIndex + 1;
     if (nextIndex < tracks.length) {
       await playTrack(nextIndex);
@@ -117,6 +142,7 @@ export default function PlayerScreen() {
   }
 
   async function handlePrevious() {
+    await recordPlaytime();
     const prevIndex = currentTrackIndex - 1;
     if (prevIndex >= 0) {
       await playTrack(prevIndex);

@@ -11,7 +11,7 @@ interface Track {
   id: string;
   title: string;
   track_number: number;
-  play_count: number;
+  total_playtime_seconds: number;
   album_id: string;
   album: {
     id: string;
@@ -20,6 +20,21 @@ interface Track {
   };
 }
 import { Plus, Trash2, ArrowLeft, Music, ExternalLink } from 'lucide-react-native';
+
+function formatPlaytime(seconds: number): string {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes}m`;
+  } else if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600);
+    return `${hours}h`;
+  } else {
+    const days = Math.floor(seconds / 86400);
+    return `${days}d`;
+  }
+}
 
 export default function ArtistDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -51,7 +66,7 @@ export default function ArtistDetailScreen() {
           id,
           title,
           track_number,
-          play_count,
+          total_playtime_seconds,
           album_id,
           album:albums(
             id,
@@ -60,7 +75,7 @@ export default function ArtistDetailScreen() {
           )
         `)
         .eq('albums.artist_id', id)
-        .order('play_count', { ascending: false })
+        .order('total_playtime_seconds', { ascending: false })
         .limit(10),
     ]);
 
@@ -176,7 +191,7 @@ export default function ArtistDetailScreen() {
                   <Text style={styles.topTrackTitle} numberOfLines={1}>{track.title}</Text>
                   <Text style={styles.topTrackAlbum} numberOfLines={1}>{track.album.title}</Text>
                 </View>
-                <Text style={styles.topTrackPlays}>{track.play_count.toLocaleString()}</Text>
+                <Text style={styles.topTrackPlays}>{formatPlaytime(track.total_playtime_seconds)}</Text>
               </TouchableOpacity>
             ))}
           </View>
