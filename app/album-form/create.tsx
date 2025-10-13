@@ -2,14 +2,16 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator,
 import { useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import { uploadImageFromUri } from '@/lib/storage';
+import { uploadImageFromUri, uploadAudioFromUri } from '@/lib/storage';
 import { ArrowLeft, Check, Plus, Trash2 } from 'lucide-react-native';
 import { ImagePicker } from '@/components/ImagePicker';
+import { AudioPicker } from '@/components/AudioPicker';
 
 interface TrackInput {
   title: string;
   track_number: number;
   audio_url: string;
+  audio_uri: string | null;
   duration_seconds: string;
 }
 
@@ -21,11 +23,12 @@ export default function CreateAlbumScreen() {
   const [albumDescription, setAlbumDescription] = useState('');
   const [albumCoverUri, setAlbumCoverUri] = useState<string | null>(null);
   const [albumReleaseDate, setAlbumReleaseDate] = useState('');
-  const [tracks, setTracks] = useState<TrackInput[]>([{ title: '', track_number: 1, audio_url: '', duration_seconds: '' }]);
+  const [tracks, setTracks] = useState<TrackInput[]>([{ title: '', track_number: 1, audio_url: '', audio_uri: null, duration_seconds: '' }]);
+  const [uploadingTracks, setUploadingTracks] = useState<boolean[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   function addTrackField() {
-    setTracks([...tracks, { title: '', track_number: tracks.length + 1, audio_url: '', duration_seconds: '' }]);
+    setTracks([...tracks, { title: '', track_number: tracks.length + 1, audio_url: '', audio_uri: null, duration_seconds: '' }]);
   }
 
   function removeTrackField(index: number) {
@@ -45,9 +48,9 @@ export default function CreateAlbumScreen() {
       return;
     }
 
-    const validTracks = tracks.filter(t => t.title.trim() && t.audio_url.trim());
+    const validTracks = tracks.filter(t => t.title.trim() && (t.audio_url.trim() || t.audio_uri));
     if (validTracks.length === 0) {
-      Alert.alert('Error', 'At least one track with title and audio URL is required');
+      Alert.alert('Error', 'At least one track with title and audio file is required');
       return;
     }
 
@@ -84,13 +87,27 @@ export default function CreateAlbumScreen() {
         return;
       }
 
-      const tracksToInsert = validTracks.map(track => ({
-        album_id: albumData.id,
-        title: track.title,
-        track_number: track.track_number,
-        audio_url: track.audio_url,
-        duration_seconds: track.duration_seconds ? parseInt(track.duration_seconds) : null,
-      }));
+      const tracksToInsert = await Promise.all(
+        validTracks.map(async (track) => {
+          let audioUrl = track.audio_url;
+
+          if (track.audio_uri && !track.audio_url) {
+            const { url, error: uploadError } = await uploadAudioFromUri(track.audio_uri);
+            if (uploadError || !url) {
+              throw new Error(`Failed to upload audio for "${track.title}": ${uploadError?.message}`);
+            }
+            audioUrl = url;
+          }
+
+          return {
+            album_id: albumData.id,
+            title: track.title,
+            track_number: track.track_number,
+            audio_url: audioUrl,
+            duration_seconds: track.duration_seconds ? parseInt(track.duration_seconds) : null,
+          };
+        })
+      );
 
       const { error: tracksError } = await supabase.from('tracks').insert(tracksToInsert);
 
@@ -203,12 +220,19 @@ export default function CreateAlbumScreen() {
                   onChangeText={(value) => updateTrack(index, 'title', value)}
                 />
 
-                <TextInput
-                  style={styles.input}
-                  placeholder="Audio URL (MP3)"
-                  placeholderTextColor="#8E8E93"
-                  value={track.audio_url}
-                  onChangeText={(value) => updateTrack(index, 'audio_url', value)}
+                <AudioPicker
+                  currentAudioUri={track.audio_uri}
+                  onAudioSelected={(uri) => {
+                    const newTracks = [...tracks];
+                    newTracks[index] = { ...newTracks[index], audio_uri: uri, audio_url: '' };
+                    setTracks(newTracks);
+                  }}
+                  onAudioRemoved={() => {
+                    const newTracks = [...tracks];
+                    newTracks[index] = { ...newTracks[index], audio_uri: null };
+                    setTracks(newTracks);
+                  }}
+                  trackTitle={track.title || `Track ${track.track_number}`}
                 />
 
                 <TextInput
