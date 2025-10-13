@@ -1,9 +1,12 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import { View } from 'react-native';
 import { Search, House, User } from 'lucide-react-native';
 import MiniPlayer from '@/components/MiniPlayer';
 
 export default function TabLayout() {
+  const segments = useSegments();
+  const isPlayerScreen = segments[segments.length - 2] === 'player';
+
   return (
     <View style={{ flex: 1, backgroundColor: '#121212' }}>
       <Tabs
@@ -62,7 +65,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <MiniPlayer />
+      {!isPlayerScreen && <MiniPlayer />}
     </View>
   );
 }
