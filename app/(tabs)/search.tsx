@@ -11,22 +11,9 @@ type SearchResult = {
 };
 
 const METAL_GENRES = [
-  'Heavy Metal',
-  'Thrash Metal',
-  'Death Metal',
   'Black Metal',
-  'Power Metal',
-  'Progressive Metal',
-  'Doom Metal',
-  'Symphonic Metal',
-  'Folk Metal',
-  'Melodic Death Metal',
-  'Metalcore',
-  'Deathcore',
-  'Nu Metal',
-  'Industrial Metal',
-  'Gothic Metal',
-  'Groove Metal',
+  'Death Metal',
+  'Doom Metal'
 ];
 
 export default function SearchTab() {
