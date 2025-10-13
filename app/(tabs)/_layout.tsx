@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Search, Library, User } from 'lucide-react-native';
+import { Search, House, User } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -17,8 +17,9 @@ export default function TabLayout() {
           name="index"
           options={{
             title: 'Browse',
+            tabBarLabel: () => null,
             tabBarIcon: ({ size, color }) => (
-              <Library size={size} color={color} />
+              <House size={size} color={color} />
             ),
           }}
         />
@@ -26,6 +27,7 @@ export default function TabLayout() {
           name="search"
           options={{
             title: 'Search',
+            tabBarLabel: () => null,
             tabBarIcon: ({ size, color }) => (
               <Search size={size} color={color} />
             ),
@@ -35,9 +37,23 @@ export default function TabLayout() {
           name="profile"
           options={{
             title: 'Profile',
+            tabBarLabel: () => null,
             tabBarIcon: ({ size, color }) => (
               <User size={size} color={color} />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name="artist"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="player"
+          options={{
+            href: null,
+            tabBarStyle: { display: 'none' },
           }}
         />
       </Tabs>
