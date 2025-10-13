@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image, Linking } from 'react-native';
 import { useState, useCallback } from 'react';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,7 +18,7 @@ interface Track {
     cover_image_url: string | null;
   };
 }
-import { Plus, Trash2, ArrowLeft, Music } from 'lucide-react-native';
+import { Plus, Trash2, ArrowLeft, Music, ExternalLink } from 'lucide-react-native';
 
 export default function ArtistDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -130,9 +130,26 @@ export default function ArtistDetailScreen() {
         <Text style={styles.headerTitle}>Artist Details</Text>
       </View>
 
+      {artist.image_url ? (
+        <Image source={{ uri: artist.image_url }} style={styles.artistImage} />
+      ) : (
+        <View style={[styles.artistImage, styles.artistImagePlaceholder]}>
+          <Music size={64} color="#3C3C3E" />
+        </View>
+      )}
+
       <View style={styles.artistHeader}>
         <Text style={styles.artistName}>{artist.name}</Text>
         {artist.genre && <Text style={styles.artistGenre}>{artist.genre}</Text>}
+        {artist.description && <Text style={styles.artistDescription}>{artist.description}</Text>}
+        {artist.website && (
+          <TouchableOpacity
+            style={styles.websiteButton}
+            onPress={() => Linking.openURL(artist.website!)}>
+            <ExternalLink size={16} color="#1DB954" />
+            <Text style={styles.websiteText}>Visit Website</Text>
+          </TouchableOpacity>
+        )}
         {artist.bio && <Text style={styles.artistBio}>{artist.bio}</Text>}
       </View>
 
@@ -236,6 +253,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
   },
+  artistImage: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    backgroundColor: '#1C1C1E',
+  },
+  artistImagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -267,6 +293,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1DB954',
     marginTop: 4,
+  },
+  artistDescription: {
+    fontSize: 16,
+    color: '#FFF',
+    marginTop: 12,
+    lineHeight: 22,
+  },
+  websiteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12,
+    paddingVertical: 8,
+  },
+  websiteText: {
+    fontSize: 14,
+    color: '#1DB954',
+    fontWeight: '600',
   },
   artistBio: {
     fontSize: 14,

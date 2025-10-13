@@ -13,6 +13,8 @@ export default function CreateArtistScreen() {
   const [artistName, setArtistName] = useState('');
   const [artistBio, setArtistBio] = useState('');
   const [artistGenre, setArtistGenre] = useState('');
+  const [artistDescription, setArtistDescription] = useState('');
+  const [artistWebsite, setArtistWebsite] = useState('');
   const [artistImageUri, setArtistImageUri] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -47,6 +49,8 @@ export default function CreateArtistScreen() {
         name: artistName,
         bio: artistBio || null,
         genre: artistGenre || null,
+        description: artistDescription || null,
+        website: artistWebsite || null,
         image_url: imageUrl,
       }).select();
 
@@ -120,6 +124,30 @@ export default function CreateArtistScreen() {
               placeholderTextColor="#8E8E93"
               value={artistGenre}
               onChangeText={setArtistGenre}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Description</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Short description of the artist"
+              placeholderTextColor="#8E8E93"
+              value={artistDescription}
+              onChangeText={setArtistDescription}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Website</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="https://example.com"
+              placeholderTextColor="#8E8E93"
+              value={artistWebsite}
+              onChangeText={setArtistWebsite}
+              keyboardType="url"
+              autoCapitalize="none"
             />
           </View>
 
