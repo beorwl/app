@@ -33,8 +33,31 @@ export default function TabLayout() {
             ),
           }}
         />
-        
 
+        
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Profile',
+            tabBarLabel: () => null,
+            tabBarIcon: ({ size, color }) => (
+              <User size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="artist"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="player"
+          options={{
+            href: null,
+            tabBarStyle: { display: 'none' },
+          }}
+        />
       </Tabs>
   );
 }
