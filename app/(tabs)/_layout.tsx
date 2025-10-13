@@ -51,16 +51,15 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="artist"
+          name="artist/[id]"
           options={{
             href: null,
           }}
         />
         <Tabs.Screen
-          name="player"
+          name="player/[albumId]"
           options={{
             href: null,
-            tabBarStyle: { display: 'none' },
           }}
         />
       </Tabs>
