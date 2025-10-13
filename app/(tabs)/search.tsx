@@ -161,7 +161,7 @@ export default function SearchTab() {
 
       {query.length === 0 && !selectedGenre && (
         <ScrollView style={styles.genresContainer}>
-          <Text style={styles.genresTitle}>Browse Metal Genres</Text>
+          <Text style={styles.genresTitle}>Explore All</Text>
           <View style={styles.genresGrid}>
             {METAL_GENRES.map((genre) => (
               <TouchableOpacity
