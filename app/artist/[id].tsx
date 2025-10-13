@@ -155,19 +155,6 @@ export default function ArtistDetailScreen() {
         </LinearGradient>
       </View>
 
-      {artist.genre && (
-        <View style={styles.genreSection}>
-          <Text style={styles.artistGenre}>{artist.genre}</Text>
-        </View>
-      )}
-
-      {artist.bio && (
-        <View style={styles.bioSection}>
-          <Text style={styles.bioLabel}>About</Text>
-          <Text style={styles.artistBio}>{artist.bio}</Text>
-        </View>
-      )}
-
       {topTracks.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Popular Tracks</Text>
