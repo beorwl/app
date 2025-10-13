@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { useState, useCallback } from 'react';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -133,30 +133,38 @@ export default function ArtistDetailScreen() {
             )}
           </View>
         ) : (
-          <View style={styles.albumsList}>
+          <View style={styles.albumsGrid}>
             {albums.map((album) => (
-              <View key={album.id} style={styles.albumCard}>
-                <View style={styles.albumInfo}>
-                  <Text style={styles.albumTitle}>{album.title}</Text>
+              <TouchableOpacity
+                key={album.id}
+                style={styles.albumCard}
+                onPress={() => router.push(`/player/${album.id}`)}>
+                {album.cover_image_url ? (
+                  <Image source={{ uri: album.cover_image_url }} style={styles.albumCover} />
+                ) : (
+                  <View style={[styles.albumCover, styles.albumCoverPlaceholder]}>
+                    <Music size={48} color="#3C3C3E" />
+                  </View>
+                )}
+                <View style={styles.albumCardInfo}>
+                  <Text style={styles.albumTitle} numberOfLines={1}>{album.title}</Text>
                   {album.release_date && (
                     <Text style={styles.albumDate}>
-                      {new Date(album.release_date).toLocaleDateString()}
-                    </Text>
-                  )}
-                  {album.description && (
-                    <Text style={styles.albumDescription} numberOfLines={2}>
-                      {album.description}
+                      {new Date(album.release_date).getFullYear()}
                     </Text>
                   )}
                 </View>
                 {isOwner && (
                   <TouchableOpacity
-                    onPress={() => handleDeleteAlbum(album)}
-                    style={styles.actionButton}>
-                    <Trash2 size={20} color="#FF3B30" />
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      handleDeleteAlbum(album);
+                    }}
+                    style={styles.deleteIconButton}>
+                    <Trash2 size={18} color="#FF3B30" />
                   </TouchableOpacity>
                 )}
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         )}
@@ -265,37 +273,48 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
     marginTop: 16,
   },
-  albumsList: {
-    gap: 12,
+  albumsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
   },
   albumCard: {
-    backgroundColor: '#1C1C1E',
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: '47%',
+    backgroundColor: '#181818',
+    borderRadius: 8,
+    padding: 12,
+    position: 'relative',
   },
-  albumInfo: {
-    flex: 1,
+  albumCover: {
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 4,
+    backgroundColor: '#282828',
+  },
+  albumCoverPlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  albumCardInfo: {
+    marginTop: 12,
   },
   albumTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '600',
     color: '#FFF',
   },
   albumDate: {
-    fontSize: 14,
-    color: '#8E8E93',
+    fontSize: 12,
+    color: '#B3B3B3',
     marginTop: 4,
   },
-  albumDescription: {
-    fontSize: 14,
-    color: '#8E8E93',
-    marginTop: 8,
-  },
-  actionButton: {
-    padding: 8,
-    marginLeft: 12,
+  deleteIconButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 16,
+    padding: 6,
   },
   errorText: {
     fontSize: 16,
