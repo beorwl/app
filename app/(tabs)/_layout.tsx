@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Music, Search, Library, User } from 'lucide-react-native';
+import { Search, Library, User } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -28,15 +28,6 @@ export default function TabLayout() {
             title: 'Search',
             tabBarIcon: ({ size, color }) => (
               <Search size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="player"
-          options={{
-            title: 'Player',
-            tabBarIcon: ({ size, color }) => (
-              <Music size={size} color={color} />
             ),
           }}
         />
