@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
-import { Music, Search, Library, LogOut } from 'lucide-react-native';
+import { Music, Search, Library, LogOut, User } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function TabLayout() {
@@ -57,6 +57,15 @@ export default function TabLayout() {
             title: 'Player',
             tabBarIcon: ({ size, color }) => (
               <Music size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ size, color }) => (
+              <User size={size} color={color} />
             ),
           }}
         />

@@ -1,98 +1,167 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeft, Play } from 'lucide-react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { useState, useCallback } from 'react';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
-import { Artist, Song } from '@/types/database';
+import { deleteImage } from '@/lib/storage';
+import { Artist, Album } from '@/types/database';
+import { Plus, Trash2, ArrowLeft, Music } from 'lucide-react-native';
 
 export default function ArtistDetailScreen() {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { userProfile } = useAuth();
+
   const [artist, setArtist] = useState<Artist | null>(null);
-  const [songs, setSongs] = useState<Song[]>([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadArtistData();
-  }, [id]);
+  const isOwner = artist?.owner_id === userProfile?.id;
+
+  useFocusEffect(
+    useCallback(() => {
+      loadArtistData();
+    }, [id])
+  );
 
   async function loadArtistData() {
-    try {
-      const { data: artistData, error: artistError } = await supabase
-        .from('artists')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
+    setLoading(true);
 
-      if (artistError) throw artistError;
-      setArtist(artistData);
+    const [artistResult, albumsResult] = await Promise.all([
+      supabase.from('artists').select('*').eq('id', id).maybeSingle(),
+      supabase.from('albums').select('*').eq('artist_id', id).order('created_at', { ascending: false }),
+    ]);
 
-      const { data: songsData, error: songsError } = await supabase
-        .from('songs')
-        .select('*')
-        .eq('artist_id', id)
-        .order('title');
-
-      if (songsError) throw songsError;
-      setSongs(songsData || []);
-    } catch (error) {
-      console.error('Error loading artist:', error);
-    } finally {
-      setLoading(false);
+    if (artistResult.data) {
+      setArtist(artistResult.data);
     }
+
+    if (albumsResult.data) {
+      setAlbums(albumsResult.data);
+    }
+
+    setLoading(false);
   }
 
-  function formatDuration(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+
+  async function handleDeleteAlbum(album: Album) {
+    Alert.alert('Delete Album', 'Are you sure you want to delete this album? All tracks will also be deleted.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          if (album.cover_image_url) {
+            await deleteImage(album.cover_image_url);
+          }
+
+          const { error } = await supabase.from('albums').delete().eq('id', album.id);
+
+          if (error) {
+            Alert.alert('Error', error.message);
+          } else {
+            loadArtistData();
+          }
+        },
+      },
+    ]);
   }
 
-  if (loading || !artist) {
+
+  if (loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#1DB954" />
+      <View style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#1DB954" />
+        </View>
+      </View>
+    );
+  }
+
+  if (!artist) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Artist not found</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <ScrollView style={styles.container}>
+      <View style={styles.headerBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <ArrowLeft size={24} color="#FFF" />
         </TouchableOpacity>
+        <Text style={styles.headerTitle}>Artist Details</Text>
       </View>
 
       <View style={styles.artistHeader}>
-        <Image source={{ uri: artist.image_url }} style={styles.artistImage} />
         <Text style={styles.artistName}>{artist.name}</Text>
-        <Text style={styles.artistGenre}>{artist.genre}</Text>
+        {artist.genre && <Text style={styles.artistGenre}>{artist.genre}</Text>}
+        {artist.bio && <Text style={styles.artistBio}>{artist.bio}</Text>}
       </View>
 
-      <Text style={styles.sectionTitle}>Songs</Text>
+      {isOwner && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Albums</Text>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => router.push(`/album-form/create?artistId=${id}`)}>
+              <Plus size={20} color="#FFF" />
+              <Text style={styles.addButtonText}>Add Album</Text>
+            </TouchableOpacity>
+          </View>
 
-      <FlatList
-        data={songs}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.songList}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.songItem}
-            onPress={() => router.push(`/(tabs)/player?songId=${item.id}`)}>
-            <Image source={{ uri: item.cover_url || artist.image_url }} style={styles.songCover} />
-            <View style={styles.songInfo}>
-              <Text style={styles.songTitle}>{item.title}</Text>
-              <Text style={styles.songArtist}>{artist.name}</Text>
-            </View>
-            <View style={styles.songMeta}>
-              <Text style={styles.duration}>{formatDuration(item.duration)}</Text>
-              <Play size={20} color="#1DB954" style={styles.playIcon} />
-            </View>
-          </TouchableOpacity>
+        </View>
+      )}
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Albums</Text>
+
+        {albums.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Music size={48} color="#8E8E93" />
+            <Text style={styles.emptyText}>No albums yet</Text>
+            {isOwner && (
+              <TouchableOpacity
+                style={styles.createFirstButton}
+                onPress={() => router.push(`/album-form/create?artistId=${id}`)}>
+                <Plus size={20} color="#FFF" />
+                <Text style={styles.createFirstButtonText}>Create Album</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : (
+          <View style={styles.albumsList}>
+            {albums.map((album) => (
+              <View key={album.id} style={styles.albumCard}>
+                <View style={styles.albumInfo}>
+                  <Text style={styles.albumTitle}>{album.title}</Text>
+                  {album.release_date && (
+                    <Text style={styles.albumDate}>
+                      {new Date(album.release_date).toLocaleDateString()}
+                    </Text>
+                  )}
+                  {album.description && (
+                    <Text style={styles.albumDescription} numberOfLines={2}>
+                      {album.description}
+                    </Text>
+                  )}
+                </View>
+                {isOwner && (
+                  <TouchableOpacity
+                    onPress={() => handleDeleteAlbum(album)}
+                    style={styles.actionButton}>
+                    <Trash2 size={20} color="#FF3B30" />
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))}
+          </View>
         )}
-      />
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -101,88 +170,137 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
   },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
+  headerBar: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#121212',
-  },
-  header: {
     paddingTop: 60,
-    paddingHorizontal: 16,
     paddingBottom: 16,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1C1C1E',
   },
   backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFF',
   },
   artistHeader: {
-    alignItems: 'center',
-    paddingVertical: 24,
-  },
-  artistImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    marginBottom: 16,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1C1C1E',
   },
   artistName: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#FFF',
-    marginBottom: 8,
   },
   artistGenre: {
     fontSize: 16,
+    color: '#1DB954',
+    marginTop: 4,
+  },
+  artistBio: {
+    fontSize: 14,
     color: '#8E8E93',
+    marginTop: 12,
+    lineHeight: 20,
+  },
+  section: {
+    padding: 16,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FFF',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
   },
-  songList: {
-    paddingHorizontal: 16,
-  },
-  songItem: {
+  addButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#1DB954',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    gap: 4,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFF',
+  },
+  createFirstButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#1DB954',
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C1E',
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginTop: 24,
   },
-  songCover: {
-    width: 56,
-    height: 56,
-    borderRadius: 4,
-    marginRight: 12,
-  },
-  songInfo: {
-    flex: 1,
-  },
-  songTitle: {
+  createFirstButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#FFF',
-    marginBottom: 4,
   },
-  songArtist: {
-    fontSize: 14,
-    color: '#8E8E93',
-  },
-  songMeta: {
-    flexDirection: 'row',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  emptyContainer: {
+    padding: 48,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#8E8E93',
+    marginTop: 16,
+  },
+  albumsList: {
     gap: 12,
   },
-  duration: {
+  albumCard: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  albumInfo: {
+    flex: 1,
+  },
+  albumTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  albumDate: {
     fontSize: 14,
     color: '#8E8E93',
+    marginTop: 4,
   },
-  playIcon: {
-    marginLeft: 8,
+  albumDescription: {
+    fontSize: 14,
+    color: '#8E8E93',
+    marginTop: 8,
+  },
+  actionButton: {
+    padding: 8,
+    marginLeft: 12,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#FF3B30',
+    textAlign: 'center',
+    padding: 24,
   },
 });

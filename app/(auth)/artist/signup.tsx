@@ -2,9 +2,10 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator,
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { Music } from 'lucide-react-native';
+import { Mic2, ArrowLeft } from 'lucide-react-native';
 
-export default function SignupScreen() {
+export default function ArtistSignupScreen() {
+  const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,7 +16,7 @@ export default function SignupScreen() {
   const router = useRouter();
 
   async function handleSignup() {
-    if (!email || !password || !confirmPassword) {
+    if (!displayName || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
       return;
     }
@@ -34,7 +35,7 @@ export default function SignupScreen() {
     setError('');
     setSuccess('');
 
-    const { error: signUpError } = await signUp(email, password);
+    const { error: signUpError } = await signUp(email, password, displayName, 'artist');
 
     if (signUpError) {
       setError(signUpError.message);
@@ -43,7 +44,7 @@ export default function SignupScreen() {
       setSuccess('Account created! You can now sign in.');
       setLoading(false);
       setTimeout(() => {
-        router.replace('/(auth)/login');
+        router.replace('/(auth)/artist/login');
       }, 2000);
     }
   }
@@ -52,14 +53,27 @@ export default function SignupScreen() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <ArrowLeft size={24} color="#FFF" />
+      </TouchableOpacity>
+
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <Music size={64} color="#1DB954" />
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Join the music community</Text>
+          <Mic2 size={64} color="#1DB954" />
+          <Text style={styles.title}>Create Artist Account</Text>
+          <Text style={styles.subtitle}>Share your music with the world</Text>
         </View>
 
         <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Display Name"
+            placeholderTextColor="#8E8E93"
+            value={displayName}
+            onChangeText={setDisplayName}
+            autoCapitalize="words"
+          />
+
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -107,7 +121,7 @@ export default function SignupScreen() {
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+            <TouchableOpacity onPress={() => router.push('/(auth)/artist/login')}>
               <Text style={styles.linkText}>Sign In</Text>
             </TouchableOpacity>
           </View>
@@ -121,6 +135,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#121212',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 60,
+    left: 16,
+    zIndex: 1,
+    padding: 8,
   },
   content: {
     flex: 1,

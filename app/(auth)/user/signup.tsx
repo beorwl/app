@@ -2,30 +2,50 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator,
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { Music } from 'lucide-react-native';
+import { User, ArrowLeft } from 'lucide-react-native';
 
-export default function LoginScreen() {
+export default function UserSignupScreen() {
+  const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signIn } = useAuth();
+  const [success, setSuccess] = useState('');
+  const { signUp } = useAuth();
   const router = useRouter();
 
-  async function handleLogin() {
-    if (!email || !password) {
+  async function handleSignup() {
+    if (!displayName || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
       return;
     }
 
     setLoading(true);
     setError('');
+    setSuccess('');
 
-    const { error: signInError } = await signIn(email, password);
+    const { error: signUpError } = await signUp(email, password, displayName, 'user');
 
-    if (signInError) {
-      setError(signInError.message);
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
+    } else {
+      setSuccess('Account created! You can now sign in.');
+      setLoading(false);
+      setTimeout(() => {
+        router.replace('/(auth)/user/login');
+      }, 2000);
     }
   }
 
@@ -33,14 +53,27 @@ export default function LoginScreen() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <ArrowLeft size={24} color="#FFF" />
+      </TouchableOpacity>
+
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <Music size={64} color="#1DB954" />
-          <Text style={styles.title}>Music App</Text>
-          <Text style={styles.subtitle}>Sign in to continue</Text>
+          <User size={64} color="#1DB954" />
+          <Text style={styles.title}>Create Listener Account</Text>
+          <Text style={styles.subtitle}>Start your music journey</Text>
         </View>
 
         <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Display Name"
+            placeholderTextColor="#8E8E93"
+            value={displayName}
+            onChangeText={setDisplayName}
+            autoCapitalize="words"
+          />
+
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -62,23 +95,34 @@ export default function LoginScreen() {
             autoCapitalize="none"
           />
 
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#8E8E93"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            autoCapitalize="none"
+          />
+
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          {success ? <Text style={styles.successText}>{success}</Text> : null}
 
           <TouchableOpacity
             style={styles.button}
-            onPress={handleLogin}
+            onPress={handleSignup}
             disabled={loading}>
             {loading ? (
               <ActivityIndicator color="#FFF" />
             ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
+              <Text style={styles.buttonText}>Sign Up</Text>
             )}
           </TouchableOpacity>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
-              <Text style={styles.linkText}>Sign Up</Text>
+            <Text style={styles.footerText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => router.push('/(auth)/user/login')}>
+              <Text style={styles.linkText}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -91,6 +135,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#121212',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 60,
+    left: 16,
+    zIndex: 1,
+    padding: 8,
   },
   content: {
     flex: 1,
@@ -137,6 +188,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#FF3B30',
+    fontSize: 14,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  successText: {
+    color: '#1DB954',
     fontSize: 14,
     marginBottom: 16,
     textAlign: 'center',
