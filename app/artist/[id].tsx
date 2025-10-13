@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image, Linking, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useCallback } from 'react';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -123,35 +124,49 @@ export default function ArtistDetailScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.headerBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+      <View style={styles.heroSection}>
+        {artist.image_url ? (
+          <Image source={{ uri: artist.image_url }} style={styles.artistImage} />
+        ) : (
+          <View style={[styles.artistImage, styles.artistImagePlaceholder]}>
+            <Music size={64} color="#3C3C3E" />
+          </View>
+        )}
+
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButtonFloating}>
           <ArrowLeft size={24} color="#FFF" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Artist Details</Text>
+
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.9)']}
+          style={styles.gradient}>
+          <View style={styles.artistInfo}>
+            <Text style={styles.artistName}>{artist.name}</Text>
+            {artist.description && <Text style={styles.artistDescription}>{artist.description}</Text>}
+            {artist.website && (
+              <TouchableOpacity
+                style={styles.websiteButton}
+                onPress={() => Linking.openURL(artist.website!)}>
+                <ExternalLink size={14} color="#1DB954" />
+                <Text style={styles.websiteText}>Visit Website</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </LinearGradient>
       </View>
 
-      {artist.image_url ? (
-        <Image source={{ uri: artist.image_url }} style={styles.artistImage} />
-      ) : (
-        <View style={[styles.artistImage, styles.artistImagePlaceholder]}>
-          <Music size={64} color="#3C3C3E" />
+      {artist.genre && (
+        <View style={styles.genreSection}>
+          <Text style={styles.artistGenre}>{artist.genre}</Text>
         </View>
       )}
 
-      <View style={styles.artistHeader}>
-        <Text style={styles.artistName}>{artist.name}</Text>
-        {artist.genre && <Text style={styles.artistGenre}>{artist.genre}</Text>}
-        {artist.description && <Text style={styles.artistDescription}>{artist.description}</Text>}
-        {artist.website && (
-          <TouchableOpacity
-            style={styles.websiteButton}
-            onPress={() => Linking.openURL(artist.website!)}>
-            <ExternalLink size={16} color="#1DB954" />
-            <Text style={styles.websiteText}>Visit Website</Text>
-          </TouchableOpacity>
-        )}
-        {artist.bio && <Text style={styles.artistBio}>{artist.bio}</Text>}
-      </View>
+      {artist.bio && (
+        <View style={styles.bioSection}>
+          <Text style={styles.bioLabel}>About</Text>
+          <Text style={styles.artistBio}>{artist.bio}</Text>
+        </View>
+      )}
 
       {topTracks.length > 0 && (
         <View style={styles.section}>
@@ -253,6 +268,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
   },
+  heroSection: {
+    position: 'relative',
+    width: '100%',
+  },
   artistImage: {
     width: '100%',
     aspectRatio: 4 / 3,
@@ -262,61 +281,83 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerBar: {
-    flexDirection: 'row',
+  backButtonFloating: {
+    position: 'absolute',
+    top: 60,
+    left: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 16,
+    zIndex: 10,
+  },
+  gradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '70%',
+    justifyContent: 'flex-end',
+  },
+  artistInfo: {
+    padding: 20,
+    paddingBottom: 24,
+  },
+  genreSection: {
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C1E',
+    paddingTop: 16,
   },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFF',
-  },
-  artistHeader: {
+  bioSection: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C1E',
   },
-  artistName: {
-    fontSize: 28,
+  bioLabel: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF',
+    marginBottom: 8,
+  },
+  artistName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   artistGenre: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#1DB954',
-    marginTop: 4,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   artistDescription: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFF',
-    marginTop: 12,
+    marginTop: 8,
     lineHeight: 22,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   websiteButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: 12,
-    paddingVertical: 8,
+    marginTop: 10,
+    alignSelf: 'flex-start',
   },
   websiteText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#1DB954',
     fontWeight: '600',
   },
   artistBio: {
     fontSize: 14,
-    color: '#8E8E93',
-    marginTop: 12,
-    lineHeight: 20,
+    color: '#B3B3B3',
+    lineHeight: 22,
   },
   section: {
     padding: 16,
