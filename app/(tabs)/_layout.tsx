@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   miniPlayerContainer: {
     position: 'absolute',
-    bottom: 50, 
+    bottom: 49, 
     left: 0,
     right: 0,
     zIndex: 10,
