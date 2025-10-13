@@ -21,6 +21,8 @@ interface PlayerContextType {
   currentTrack: Track | null;
   currentAlbum: Album | null;
   isPlaying: boolean;
+  position: number;
+  duration: number;
   playTrack: (track: Track, album: Album) => Promise<void>;
   togglePlayPause: () => Promise<void>;
   stopPlayback: () => Promise<void>;
@@ -32,6 +34,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [currentAlbum, setCurrentAlbum] = useState<Album | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [position, setPosition] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const playStartTimeRef = useRef<number | null>(null);
   const lastPositionRef = useRef<number>(0);
@@ -76,6 +80,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
       newSound.setOnPlaybackStatusUpdate((status) => {
         if (status.isLoaded) {
+          setPosition(status.positionMillis);
+          setDuration(status.durationMillis || 0);
           if (status.isPlaying) {
             lastPositionRef.current = status.positionMillis / 1000;
           }
@@ -120,6 +126,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         currentTrack,
         currentAlbum,
         isPlaying,
+        position,
+        duration,
         playTrack,
         togglePlayPause,
         stopPlayback,
