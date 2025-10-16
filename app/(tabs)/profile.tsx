@@ -79,9 +79,9 @@ export default function ProfileScreen() {
       <View style={styles.profileHeader}>
         <View style={styles.profileIcon}>
           {isArtistAccount ? (
-            <Mic2 size={40} color="#1DB954" />
+            <Mic2 size={40} color="#ea2745" />
           ) : (
-            <UserIcon size={40} color="#1DB954" />
+            <UserIcon size={40} color="#ea2745" />
           )}
         </View>
         <Text style={styles.displayName}>{userProfile?.display_name}</Text>
@@ -113,7 +113,7 @@ export default function ProfileScreen() {
 
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#1DB954" />
+              <ActivityIndicator size="large" color="#ea2745" />
             </View>
           ) : artists.length === 0 ? (
             <View style={styles.emptyContainer}>
@@ -144,7 +144,7 @@ export default function ProfileScreen() {
                     <TouchableOpacity
                       onPress={() => router.push(`/artist-form/${artist.id}`)}
                       style={styles.actionButton}>
-                      <Edit size={20} color="#1DB954" />
+                      <Edit size={20} color="#ea2745" />
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => handleDeleteArtist(artist.id, artist.image_url)}
@@ -165,20 +165,20 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   profileHeader: {
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderBottomWidth: 1,
-    borderBottomColor: '#2C2C2E',
+    borderBottomColor: '#3a3a3a',
   },
   profileIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#1DB95420',
+    backgroundColor: '#ea274520',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -191,22 +191,22 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
     marginBottom: 12,
   },
   accountTypeBadge: {
-    backgroundColor: '#1DB95420',
+    backgroundColor: '#ea274520',
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#1DB954',
+    borderColor: '#ea2745',
     marginBottom: 16,
   },
   accountTypeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#1DB954',
+    color: '#ea2745',
   },
   signOutButton: {
     paddingVertical: 10,
@@ -235,11 +235,11 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 4,
   },
   addButton: {
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -272,11 +272,11 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#8E8E93',
+    color: '#999999',
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 8,
     textAlign: 'center',
   },
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   artistCard: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -300,19 +300,19 @@ const styles = StyleSheet.create({
   },
   artistGenre: {
     fontSize: 14,
-    color: '#1DB954',
+    color: '#ea2745',
     marginTop: 4,
   },
   artistBio: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 8,
   },
   viewAlbumsButton: {
     marginTop: 12,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     borderRadius: 8,
     alignSelf: 'flex-start',
   },

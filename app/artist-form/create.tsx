@@ -109,7 +109,7 @@ export default function CreateArtistScreen() {
             <TextInput
               style={styles.input}
               placeholder="Enter artist name"
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={artistName}
               onChangeText={setArtistName}
               autoFocus
@@ -121,7 +121,7 @@ export default function CreateArtistScreen() {
             <TextInput
               style={styles.input}
               placeholder="e.g., Rock, Pop, Hip-Hop"
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={artistGenre}
               onChangeText={setArtistGenre}
             />
@@ -132,7 +132,7 @@ export default function CreateArtistScreen() {
             <TextInput
               style={styles.input}
               placeholder="Short description of the artist"
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={artistDescription}
               onChangeText={setArtistDescription}
             />
@@ -143,7 +143,7 @@ export default function CreateArtistScreen() {
             <TextInput
               style={styles.input}
               placeholder="https://example.com"
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={artistWebsite}
               onChangeText={setArtistWebsite}
               keyboardType="url"
@@ -156,7 +156,7 @@ export default function CreateArtistScreen() {
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Tell fans about this artist..."
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={artistBio}
               onChangeText={setArtistBio}
               multiline
@@ -173,7 +173,7 @@ export default function CreateArtistScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   header: {
     flexDirection: 'row',
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
     paddingHorizontal: 16,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderBottomWidth: 1,
     borderBottomColor: '#2C2C2E',
   },
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   saveButton: {
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 8,
     padding: 16,
     fontSize: 16,

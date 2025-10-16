@@ -228,7 +228,7 @@ export default function SearchTab() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   header: {
     fontSize: 32,
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     marginHorizontal: 16,
     marginBottom: 16,
     borderRadius: 8,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 16,
     textAlign: 'center',
   },
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1C1C1E',
+    borderBottomColor: '#2a2a2a',
   },
   resultImage: {
     width: 56,
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 4,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   resultSubtitle: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
   },
   genresContainer: {
     flex: 1,
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   genreCard: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     paddingVertical: 20,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -358,11 +358,11 @@ const styles = StyleSheet.create({
   backButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 6,
   },
   backButtonText: {
-    color: '#1DB954',
+    color: '#ea2745',
     fontSize: 14,
     fontWeight: '600',
   },

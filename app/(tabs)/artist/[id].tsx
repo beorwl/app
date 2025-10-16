@@ -129,7 +129,7 @@ export default function ArtistDetailScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#1DB954" />
+          <ActivityIndicator size="large" color="#ea2745" />
         </View>
       </View>
     );
@@ -168,7 +168,7 @@ export default function ArtistDetailScreen() {
               <TouchableOpacity
                 style={styles.websiteButton}
                 onPress={() => Linking.openURL(artist.website!)}>
-                <ExternalLink size={14} color="#1DB954" />
+                <ExternalLink size={14} color="#ea2745" />
                 <Text style={styles.websiteText}>Visit Website</Text>
               </TouchableOpacity>
             )}
@@ -235,7 +235,7 @@ export default function ArtistDetailScreen() {
 
         {albums.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Music size={48} color="#8E8E93" />
+            <Music size={48} color="#999999" />
             <Text style={styles.emptyText}>No albums yet</Text>
             {isOwner && (
               <TouchableOpacity
@@ -296,7 +296,7 @@ export default function ArtistDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   heroSection: {
     position: 'relative',
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   artistImage: {
     width: '100%',
     aspectRatio: 4 / 3,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
   },
   artistImagePlaceholder: {
     justifyContent: 'center',
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   },
   artistGenre: {
     fontSize: 14,
-    color: '#1DB954',
+    color: '#ea2745',
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   },
   websiteText: {
     fontSize: 13,
-    color: '#1DB954',
+    color: '#ea2745',
     fontWeight: '600',
   },
   artistBio: {
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 16,
   },
   albumsCarousel: {
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
   },
   albumCover: {
     width: '100%',
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
   topTrackNumber: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#8E8E93',
+    color: '#999999',
     width: 24,
     textAlign: 'center',
   },
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   },
   topTrackPlays: {
     fontSize: 13,
-    color: '#8E8E93',
+    color: '#999999',
   },
   errorText: {
     fontSize: 16,

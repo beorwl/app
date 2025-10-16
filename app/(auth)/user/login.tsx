@@ -39,7 +39,7 @@ export default function UserLoginScreen() {
 
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <User size={64} color="#1DB954" />
+          <User size={64} color="#ea2745" />
           <Text style={styles.title}>Listener Sign In</Text>
           <Text style={styles.subtitle}>Continue enjoying great music</Text>
         </View>
@@ -48,7 +48,7 @@ export default function UserLoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Email"
-            placeholderTextColor="#8E8E93"
+            placeholderTextColor="#666666"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -59,7 +59,7 @@ export default function UserLoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Password"
-            placeholderTextColor="#8E8E93"
+            placeholderTextColor="#666666"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -94,7 +94,7 @@ export default function UserLoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   backButton: {
     position: 'absolute',
@@ -120,14 +120,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 8,
   },
   form: {
     width: '100%',
   },
   input: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: {
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
@@ -159,11 +159,11 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
   },
   linkText: {
     fontSize: 14,
-    color: '#1DB954',
+    color: '#ea2745',
     fontWeight: '600',
   },
 });

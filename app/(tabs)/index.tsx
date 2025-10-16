@@ -32,7 +32,7 @@ export default function BrowseTab() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#1DB954" />
+        <ActivityIndicator size="large" color="#ea2745" />
       </View>
     );
   }
@@ -62,13 +62,13 @@ export default function BrowseTab() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   header: {
     fontSize: 32,
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   artistCard: {
     flex: 1,
     margin: 8,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   artistGenre: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: '#999999',
     textAlign: 'center',
   },
 });

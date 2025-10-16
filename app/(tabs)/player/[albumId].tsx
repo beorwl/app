@@ -153,7 +153,7 @@ export default function PlayerScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#1DB954" />
+          <ActivityIndicator size="large" color="#ea2745" />
         </View>
       </View>
     );
@@ -240,7 +240,7 @@ export default function PlayerScreen() {
                 </Text>
               </View>
               {currentTrackIndex === index && isPlaying && (
-                <Play size={16} color="#1DB954" fill="#1DB954" />
+                <Play size={16} color="#ea2745" fill="#ea2745" />
               )}
             </TouchableOpacity>
           ))}
@@ -253,7 +253,7 @@ export default function PlayerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   headerBar: {
     flexDirection: 'row',
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#1C1C1E',
+    borderBottomColor: '#2a2a2a',
   },
   backButton: {
     marginRight: 16,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   coverImage: {
     width: '100%',
     aspectRatio: 1,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
   },
   albumInfo: {
     padding: 24,
@@ -301,20 +301,20 @@ const styles = StyleSheet.create({
   },
   albumDescription: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 8,
     lineHeight: 20,
   },
   nowPlaying: {
     padding: 16,
     marginHorizontal: 16,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 12,
     marginBottom: 24,
   },
   nowPlayingLabel: {
     fontSize: 12,
-    color: '#1DB954',
+    color: '#ea2745',
     fontWeight: '600',
     textTransform: 'uppercase',
   },
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   },
   nowPlayingNumber: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 4,
   },
   controls: {
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 8,
     marginBottom: 8,
   },
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   },
   trackNumber: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#999999',
     width: 24,
     textAlign: 'center',
   },
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   trackTitleActive: {
-    color: '#1DB954',
+    color: '#ea2745',
     fontWeight: '600',
   },
 });

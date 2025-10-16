@@ -12,11 +12,11 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#1DB954',
-          tabBarInactiveTintColor: '#8E8E93',
+          tabBarActiveTintColor: '#ea2745',
+          tabBarInactiveTintColor: '#666666',
           tabBarStyle: {
-            backgroundColor: '#000',
-            borderTopColor: '#1C1C1E',
+            backgroundColor: '#000000',
+            borderTopColor: '#333333',
           },
         }}
       >
@@ -76,7 +76,7 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   miniPlayerContainer: {
     position: 'absolute',

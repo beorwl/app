@@ -59,7 +59,7 @@ export default function UserSignupScreen() {
 
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <User size={64} color="#1DB954" />
+          <User size={64} color="#ea2745" />
           <Text style={styles.title}>Create Listener Account</Text>
           <Text style={styles.subtitle}>Start your music journey</Text>
         </View>
@@ -68,7 +68,7 @@ export default function UserSignupScreen() {
           <TextInput
             style={styles.input}
             placeholder="Display Name"
-            placeholderTextColor="#8E8E93"
+            placeholderTextColor="#666666"
             value={displayName}
             onChangeText={setDisplayName}
             autoCapitalize="words"
@@ -77,7 +77,7 @@ export default function UserSignupScreen() {
           <TextInput
             style={styles.input}
             placeholder="Email"
-            placeholderTextColor="#8E8E93"
+            placeholderTextColor="#666666"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -88,7 +88,7 @@ export default function UserSignupScreen() {
           <TextInput
             style={styles.input}
             placeholder="Password"
-            placeholderTextColor="#8E8E93"
+            placeholderTextColor="#666666"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -98,7 +98,7 @@ export default function UserSignupScreen() {
           <TextInput
             style={styles.input}
             placeholder="Confirm Password"
-            placeholderTextColor="#8E8E93"
+            placeholderTextColor="#666666"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
@@ -134,7 +134,7 @@ export default function UserSignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   backButton: {
     position: 'absolute',
@@ -160,14 +160,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: '#999999',
     marginTop: 8,
   },
   form: {
     width: '100%',
   },
   input: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: {
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   successText: {
-    color: '#1DB954',
+    color: '#ea2745',
     fontSize: 14,
     marginBottom: 16,
     textAlign: 'center',
@@ -205,11 +205,11 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: '#999999',
   },
   linkText: {
     fontSize: 14,
-    color: '#1DB954',
+    color: '#ea2745',
     fontWeight: '600',
   },
 });

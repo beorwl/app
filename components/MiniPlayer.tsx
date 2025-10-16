@@ -53,17 +53,17 @@ export default function MiniPlayer() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#282828',
+    backgroundColor: '#2a2a2a',
     borderTopWidth: 1,
-    borderTopColor: '#404040',
+    borderTopColor: '#3a3a3a',
   },
   progressBarContainer: {
     height: 2,
-    backgroundColor: '#404040',
+    backgroundColor: '#3a3a3a',
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
   },
   container: {
     flexDirection: 'row',
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   albumTitle: {
-    color: '#B3B3B3',
+    color: '#999999',
     fontSize: 12,
   },
   playButton: {

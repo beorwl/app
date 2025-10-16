@@ -165,7 +165,7 @@ export default function CreateAlbumScreen() {
             <TextInput
               style={styles.input}
               placeholder="Enter album title"
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={albumTitle}
               onChangeText={setAlbumTitle}
               autoFocus
@@ -177,7 +177,7 @@ export default function CreateAlbumScreen() {
             <TextInput
               style={styles.input}
               placeholder="YYYY-MM-DD (e.g., 2024-01-15)"
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={albumReleaseDate}
               onChangeText={setAlbumReleaseDate}
             />
@@ -188,7 +188,7 @@ export default function CreateAlbumScreen() {
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Describe the album..."
-              placeholderTextColor="#8E8E93"
+              placeholderTextColor="#666666"
               value={albumDescription}
               onChangeText={setAlbumDescription}
               multiline
@@ -215,7 +215,7 @@ export default function CreateAlbumScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="Track Title"
-                  placeholderTextColor="#8E8E93"
+                  placeholderTextColor="#666666"
                   value={track.title}
                   onChangeText={(value) => updateTrack(index, 'title', value)}
                 />
@@ -238,7 +238,7 @@ export default function CreateAlbumScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="Duration in seconds (optional)"
-                  placeholderTextColor="#8E8E93"
+                  placeholderTextColor="#666666"
                   value={track.duration_seconds}
                   onChangeText={(value) => updateTrack(index, 'duration_seconds', value)}
                   keyboardType="numeric"
@@ -247,7 +247,7 @@ export default function CreateAlbumScreen() {
             ))}
 
             <TouchableOpacity style={styles.addTrackButton} onPress={addTrackField}>
-              <Plus size={16} color="#1DB954" />
+              <Plus size={16} color="#ea2745" />
               <Text style={styles.addTrackText}>Add Track</Text>
             </TouchableOpacity>
           </View>
@@ -260,7 +260,7 @@ export default function CreateAlbumScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1c1c1c',
   },
   header: {
     flexDirection: 'row',
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
     paddingHorizontal: 16,
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderBottomWidth: 1,
     borderBottomColor: '#2C2C2E',
   },
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   saveButton: {
-    backgroundColor: '#1DB954',
+    backgroundColor: '#ea2745',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
@@ -335,11 +335,11 @@ const styles = StyleSheet.create({
   },
   tracksSubtitle: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: '#999999',
     marginBottom: 16,
   },
   trackInput: {
-    backgroundColor: '#1C1C1E',
+    backgroundColor: '#2a2a2a',
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   trackNumber: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1DB954',
+    color: '#ea2745',
   },
   addTrackButton: {
     flexDirection: 'row',
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#1DB954',
+    borderColor: '#ea2745',
     borderStyle: 'dashed',
     marginBottom: 16,
     gap: 8,
@@ -372,6 +372,6 @@ const styles = StyleSheet.create({
   addTrackText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1DB954',
+    color: '#ea2745',
   },
 });
